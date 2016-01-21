@@ -169,18 +169,24 @@ class CrudViewCommand extends Command
             $i++;
         }
 
+        $replaces = [
+            '%%formHeadingHtml%%'   => $formHeadingHtml,
+            '%%formBodyHtml%%'      => $formBodyHtml,
+            '%%crudName%%'          => $crudName,
+            '%%crudNameSingular%%'  => $crudNameSingular,
+            '%%crudNameCap%%'       => $crudNameCap,
+            '%%modelName%%'         => $modelName,
+            '%%routeGroup%%'        => $routeGroup,
+            '%%formFieldsHtml%%'    => $formFieldsHtml,
+        ];
+
         // For index.blade.php file
         $indexFile = $this->viewDirectoryPath . 'index.blade.stub';
         $newIndexFile = $path . 'index.blade.php';
         if (!File::copy($indexFile, $newIndexFile)) {
             echo "failed to copy $indexFile...\n";
         } else {
-            File::put($newIndexFile, str_replace('%%formHeadingHtml%%', $formHeadingHtml, File::get($newIndexFile)));
-            File::put($newIndexFile, str_replace('%%formBodyHtml%%', $formBodyHtml, File::get($newIndexFile)));
-            File::put($newIndexFile, str_replace('%%crudName%%', $crudName, File::get($newIndexFile)));
-            File::put($newIndexFile, str_replace('%%crudNameCap%%', $crudNameCap, File::get($newIndexFile)));
-            File::put($newIndexFile, str_replace('%%modelName%%', $modelName, File::get($newIndexFile)));
-            File::put($newIndexFile, str_replace('%%routeGroup%%', $routeGroup, File::get($newIndexFile)));
+            File::put($newIndexFile, str_replace(array_keys($replaces), $replaces, File::get($newIndexFile)));
         }
 
         // For create.blade.php file
@@ -189,10 +195,7 @@ class CrudViewCommand extends Command
         if (!File::copy($createFile, $newCreateFile)) {
             echo "failed to copy $createFile...\n";
         } else {
-            File::put($newCreateFile, str_replace('%%crudName%%', $crudName, File::get($newCreateFile)));
-            File::put($newCreateFile, str_replace('%%modelName%%', $modelName, File::get($newCreateFile)));
-            File::put($newCreateFile, str_replace('%%routeGroup%%', $routeGroup, File::get($newCreateFile)));
-            File::put($newCreateFile, str_replace('%%formFieldsHtml%%', $formFieldsHtml, File::get($newCreateFile)));
+            File::put($newCreateFile, str_replace(array_keys($replaces), $replaces, File::get($newCreateFile)));
         }
 
         // For edit.blade.php file
@@ -201,11 +204,7 @@ class CrudViewCommand extends Command
         if (!File::copy($editFile, $newEditFile)) {
             echo "failed to copy $editFile...\n";
         } else {
-            File::put($newEditFile, str_replace('%%crudName%%', $crudName, File::get($newEditFile)));
-            File::put($newEditFile, str_replace('%%crudNameSingular%%', $crudNameSingular, File::get($newEditFile)));
-            File::put($newEditFile, str_replace('%%modelName%%', $modelName, File::get($newEditFile)));
-            File::put($newEditFile, str_replace('%%routeGroup%%', $routeGroup, File::get($newEditFile)));
-            File::put($newEditFile, str_replace('%%formFieldsHtml%%', $formFieldsHtml, File::get($newEditFile)));
+            File::put($newEditFile, str_replace(array_keys($replaces), $replaces, File::get($newEditFile)));
         }
 
         // For show.blade.php file
@@ -214,10 +213,7 @@ class CrudViewCommand extends Command
         if (!File::copy($showFile, $newShowFile)) {
             echo "failed to copy $showFile...\n";
         } else {
-            File::put($newShowFile, str_replace('%%formHeadingHtml%%', $formHeadingHtml, File::get($newShowFile)));
-            File::put($newShowFile, str_replace('%%formBodyHtml%%', $formBodyHtmlForShowView, File::get($newShowFile)));
-            File::put($newShowFile, str_replace('%%crudNameSingular%%', $crudNameSingular, File::get($newShowFile)));
-            File::put($newShowFile, str_replace('%%modelName%%', $modelName, File::get($newShowFile)));
+            File::put($newShowFile, str_replace(array_keys($replaces), $replaces, File::get($newShowFile)));
         }
 
         // For layouts/master.blade.php file
