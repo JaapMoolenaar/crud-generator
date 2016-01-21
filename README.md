@@ -179,6 +179,12 @@ If you use another section name in your layout, set it using:
 'section_name' => 'sub_content',
 ```
 
+Set middleware to be used by the resource controller, using:
+(Laravel 5.2's 'web' middleware, will be added automatically)
+```php
+'middleware' => 'auth',
+```
+
 ##Authors
 
 [Sohel Amin](http://www.sohelamin.com)
