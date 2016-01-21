@@ -9,7 +9,7 @@ Laravel CRUD Generator
 
 1. Run
     ```
-    composer require appzcoder/crud-generator
+    composer require jaapmoolenaar.nl/crud-generator
     ```
 
 2. Add service provider to **/config/app.php** file.
@@ -20,16 +20,8 @@ Laravel CRUD Generator
         Appzcoder\CrudGenerator\CrudGeneratorServiceProvider::class,
     ],
     ```
-3. Install **laravelcollective/html** package for form & html.
-    * Run
 
-    ```
-    composer require laravelcollective/html
-    // For laravel 5.1
-    composer require laravelcollective/html:5.1.*
-    ```
-    
-    * Add service provider & aliases to **/config/app.php** file.
+3. Add service provider & aliases for **laravelcollective/html** to **/config/app.php** file.
     ```php
     'providers' => [
         ...
@@ -37,20 +29,37 @@ Laravel CRUD Generator
         Collective\Html\HtmlServiceProvider::class,
     ],
 
-    // Use the lines below for "laravelcollective/html" package otherwise remove it.
     'aliases' => [
         ...
 
         'Form'      => Collective\Html\FormFacade::class,
         'HTML'      => Collective\Html\HtmlFacade::class,
     ],
-    ```    
-4. Run **composer update**
+    ```
+
+4. Add service provider & aliases for **laracasts/flash** to **/config/app.php** file.
+    ```php
+    'providers' => [
+        ...
+
+        Laracasts\Flash\FlashServiceProvider::class,
+    ],
+
+    'aliases' => [
+        ...
+
+        'Flash'     => Laracasts\Flash\Flash::class,
+    ],
+    ```
+
+4. Run **composer update** if composer hasn't installed the updates already
 
 5. Publish config file & generator template files.
     ```
     php artisan vendor:publish
     ```
+
+    This copies the stubs to resources/crud-generator/, remember to enable them in the config ('custom_template' in crudgenerator.php) if you want to use them
 
 Note: You should have configured database for this operation.
 

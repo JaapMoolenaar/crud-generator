@@ -3,6 +3,7 @@
 @section('%%sectionName%%')
 
     <h1>%%crudNameCap%% <a href="{{ url('%%routeGroup%%%%crudName%%/create') }}" class="btn btn-primary pull-right btn-sm">Add New %%modelName%%</a></h1>
+    @include('flash::message')
     <div class="table">
         <table class="table table-bordered table-striped table-hover">
             <thead>
