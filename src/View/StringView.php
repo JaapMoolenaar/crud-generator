@@ -65,26 +65,26 @@ class StringView extends \Illuminate\View\View {
      * @param array $__data
      * @return string
      */
-	protected function evaluateContent($__contents, $__data)
-	{
-		$obLevel = ob_get_level();
+    protected function evaluateContent($__contents, $__data)
+    {
+        $obLevel = ob_get_level();
 
-		ob_start();
+        ob_start();
 
-		extract($__data);
+        extract($__data);
 
-		// We'll evaluate the contents of the view inside a try/catch block so we can
-		// flush out any stray output that might get out before an error occurs or
-		// an exception is thrown. This prevents any partial views from leaking.
-		try
-		{
-			eval("\r\n?>".$__contents."<?php\r\n");
-		}
-		catch (Exception $e)
-		{
-			$this->handleViewException($e, $obLevel);
-		}
+        // We'll evaluate the contents of the view inside a try/catch block so we can
+        // flush out any stray output that might get out before an error occurs or
+        // an exception is thrown. This prevents any partial views from leaking.
+        try
+        {
+            eval("\r\n?>".$__contents."<?php\r\n");
+        }
+        catch (Exception $e)
+        {
+            $this->handleViewException($e, $obLevel);
+        }
 
-		return ltrim(ob_get_clean());
-	}
+        return ltrim(ob_get_clean());
+    }
 }
