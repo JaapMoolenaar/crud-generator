@@ -96,9 +96,18 @@ class CrudCommand extends Command
         if (file_exists($routeFile) && (strtolower($this->option('route')) === 'yes')) {
             $controller = ($controllerNamespace != '') ? $controllerNamespace . '\\' . $name . 'Controller' : $name . 'Controller';
 
+            $middleware = [];
             if (\App::VERSION() >= '5.2') {
+                $middleware[] = 'web';
+            }
+            
+            if(config('crudgenerator.middleware', false) !== false) {
+                $middleware = array_merge($middleware, explode(',', config('crudgenerator.middleware')));
+            }
+            
+            if(count($middleware)) {
                 $isAdded = File::append($routeFile,
-                    "\nRoute::group(['middleware' => ['web']], function () {"
+                    "\nRoute::group(['middleware' => ['".implode("','", $middleware)."']], function () {"
                     . "\n\tRoute::resource('" . $routeName . "', '" . $controller . "');"
                     . "\n});"
                 );

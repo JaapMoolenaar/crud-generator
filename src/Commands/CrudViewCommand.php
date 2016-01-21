@@ -160,11 +160,11 @@ class CrudViewCommand extends Command
             $formHeadingHtml .= '<th>' . $label . '</th>';
 
             if ($i == 0) {
-                $formBodyHtml .= '<td><a href="{{ url(\'%%routeGroup%%%%crudName%%\', $item->id) }}">{{ $item->' . $field . ' }}</a></td>';
+                $formBodyHtml .= '<td><a href="{{ url(\''.$routeGroup.$crudName.'\', $item->id) }}">{{ $item->' . $field . ' }}</a></td>';
             } else {
                 $formBodyHtml .= '<td>{{ $item->' . $field . ' }}</td>';
             }
-            $formBodyHtmlForShowView .= '<td> {{ $%%crudNameSingular%%->' . $field . ' }} </td>';
+            $formBodyHtmlForShowView .= '<td> {{ $'.$crudNameSingular.'->' . $field . ' }} </td>';
 
             $i++;
         }
@@ -181,7 +181,7 @@ class CrudViewCommand extends Command
             '%%extendsLayout%%'     => config('crudgenerator.extend_layout', 'layouts.master'),
             '%%sectionName%%'       => config('crudgenerator.section_name', 'content'),
         ];
-
+        
         // For index.blade.php file
         $indexFile = $this->viewDirectoryPath . 'index.blade.stub';
         $newIndexFile = $path . 'index.blade.php';
@@ -209,6 +209,10 @@ class CrudViewCommand extends Command
             File::put($newEditFile, str_replace(array_keys($replaces), $replaces, File::get($newEditFile)));
         }
 
+        
+        // For the show.blade.php another formBodyHrml is used
+        $replaces['%%formBodyHtml%%'] = $formBodyHtmlForShowView;
+        
         // For show.blade.php file
         $showFile = $this->viewDirectoryPath . 'show.blade.stub';
         $newShowFile = $path . 'show.blade.php';
