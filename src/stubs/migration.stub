@@ -12,7 +12,7 @@ class DummyClass extends Migration
      */
     public function up()
     {
-        {{schema_up}}
+        {!! $schemaUp !!}
     }
 
     /**
@@ -22,7 +22,7 @@ class DummyClass extends Migration
      */
     public function down()
     {
-        {{schema_down}}
+        {!! $schemaDown !!}
     }
 
 }

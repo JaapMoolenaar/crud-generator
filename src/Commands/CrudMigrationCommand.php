@@ -2,8 +2,6 @@
 
 namespace Appzcoder\CrudGenerator\Commands;
 
-use Illuminate\Console\GeneratorCommand;
-
 class CrudMigrationCommand extends GeneratorCommand
 {
     /**
@@ -83,145 +81,120 @@ class CrudMigrationCommand extends GeneratorCommand
             $x++;
         }
 
-        $schemaFields = '';
+        $schemaFieldsCollection = [];
         foreach ($data as $item) {
             switch ($item['type']) {
                 case 'char':
-                    $schemaFields .= "\$table->char('" . $item['name'] . "');\n";
+                    $schemaFieldsCollection[] = "\$table->char('" . $item['name'] . "');";
                     break;
 
                 case 'date':
-                    $schemaFields .= "\$table->date('" . $item['name'] . "');\n";
+                    $schemaFieldsCollection[] = "\$table->date('" . $item['name'] . "');";
                     break;
 
                 case 'datetime':
-                    $schemaFields .= "\$table->dateTime('" . $item['name'] . "');\n";
+                    $schemaFieldsCollection[] = "\$table->dateTime('" . $item['name'] . "');";
                     break;
 
                 case 'time':
-                    $schemaFields .= "\$table->time('" . $item['name'] . "');\n";
+                    $schemaFieldsCollection[] = "\$table->time('" . $item['name'] . "');";
                     break;
 
                 case 'timestamp':
-                    $schemaFields .= "\$table->timestamp('" . $item['name'] . "');\n";
+                    $schemaFieldsCollection[] = "\$table->timestamp('" . $item['name'] . "');";
                     break;
 
                 case 'text':
-                    $schemaFields .= "\$table->text('" . $item['name'] . "');\n";
+                    $schemaFieldsCollection[] = "\$table->text('" . $item['name'] . "');";
                     break;
 
                 case 'mediumtext':
-                    $schemaFields .= "\$table->mediumText('" . $item['name'] . "');\n";
+                    $schemaFieldsCollection[] = "\$table->mediumText('" . $item['name'] . "');";
                     break;
 
                 case 'longtext':
-                    $schemaFields .= "\$table->longText('" . $item['name'] . "');\n";
+                    $schemaFieldsCollection[] = "\$table->longText('" . $item['name'] . "');";
                     break;
 
                 case 'json':
-                    $schemaFields .= "\$table->json('" . $item['name'] . "');\n";
+                    $schemaFieldsCollection[] = "\$table->json('" . $item['name'] . "');";
                     break;
 
                 case 'jsonb':
-                    $schemaFields .= "\$table->jsonb('" . $item['name'] . "');\n";
+                    $schemaFieldsCollection[] = "\$table->jsonb('" . $item['name'] . "');";
                     break;
 
                 case 'binary':
-                    $schemaFields .= "\$table->binary('" . $item['name'] . "');\n";
+                    $schemaFieldsCollection[] = "\$table->binary('" . $item['name'] . "');";
                     break;
 
                 case 'number':
                 case 'integer':
-                    $schemaFields .= "\$table->integer('" . $item['name'] . "');\n";
+                    $schemaFieldsCollection[] = "\$table->integer('" . $item['name'] . "');";
                     break;
 
                 case 'bigint':
-                    $schemaFields .= "\$table->bigInteger('" . $item['name'] . "');\n";
+                    $schemaFieldsCollection[] = "\$table->bigInteger('" . $item['name'] . "');";
                     break;
 
                 case 'mediumint':
-                    $schemaFields .= "\$table->mediumInteger('" . $item['name'] . "');\n";
+                    $schemaFieldsCollection[] = "\$table->mediumInteger('" . $item['name'] . "');";
                     break;
 
                 case 'tinyint':
-                    $schemaFields .= "\$table->tinyInteger('" . $item['name'] . "');\n";
+                    $schemaFieldsCollection[] = "\$table->tinyInteger('" . $item['name'] . "');";
                     break;
 
                 case 'smallint':
-                    $schemaFields .= "\$table->smallInteger('" . $item['name'] . "');\n";
+                    $schemaFieldsCollection[] = "\$table->smallInteger('" . $item['name'] . "');";
                     break;
 
                 case 'boolean':
-                    $schemaFields .= "\$table->boolean('" . $item['name'] . "');\n";
+                    $schemaFieldsCollection[] = "\$table->boolean('" . $item['name'] . "');";
                     break;
 
                 case 'decimal':
-                    $schemaFields .= "\$table->decimal('" . $item['name'] . "');\n";
+                    $schemaFieldsCollection[] = "\$table->decimal('" . $item['name'] . "');";
                     break;
 
                 case 'double':
-                    $schemaFields .= "\$table->double('" . $item['name'] . "');\n";
+                    $schemaFieldsCollection[] = "\$table->double('" . $item['name'] . "');";
                     break;
 
                 case 'float':
-                    $schemaFields .= "\$table->float('" . $item['name'] . "');\n";
+                    $schemaFieldsCollection[] = "\$table->float('" . $item['name'] . "');";
                     break;
 
                 default:
-                    $schemaFields .= "\$table->string('" . $item['name'] . "');\n";
+                    $schemaFieldsCollection[] = "\$table->string('" . $item['name'] . "');";
                     break;
             }
         }
 
+        
+        $schemaFields = implode(
+            PHP_EOL.'            ', 
+            $schemaFieldsCollection
+        );
+        
         $primaryKey = $this->option('pk');
 
         $schemaUp = "
-            Schema::create('" . $tableName . "', function(Blueprint \$table) {
-                \$table->increments('" . $primaryKey . "');
-                " . $schemaFields . "
-                \$table->timestamps();
-            });
-            ";
+        Schema::create('" . $tableName . "', function(Blueprint \$table) {
+            \$table->increments('" . $primaryKey . "');
+            " . $schemaFields . "
+            \$table->timestamps();
+        });";
 
         $schemaDown = "Schema::drop('" . $tableName . "');";
 
-        return $this->replaceSchemaUp($stub, $schemaUp)
-            ->replaceSchemaDown($stub, $schemaDown)
-            ->replaceClass($stub, $className);
+        $data = compact([
+            'schemaUp',
+            'schemaDown',
+        ]);
+        
+        $stub = $this->makeFromBladeString($stub, $data);
+        
+        return $this->replaceClass($stub, $className);
     }
-
-    /**
-     * Replace the schema_up for the given stub.
-     *
-     * @param  string  $stub
-     * @param  string  $schemaUp
-     *
-     * @return $this
-     */
-    protected function replaceSchemaUp(&$stub, $schemaUp)
-    {
-        $stub = str_replace(
-            '{{schema_up}}', $schemaUp, $stub
-        );
-
-        return $this;
-    }
-
-    /**
-     * Replace the schema_down for the given stub.
-     *
-     * @param  string  $stub
-     * @param  string  $schemaDown
-     *
-     * @return $this
-     */
-    protected function replaceSchemaDown(&$stub, $schemaDown)
-    {
-        $stub = str_replace(
-            '{{schema_down}}', $schemaDown, $stub
-        );
-
-        return $this;
-    }
-
 }

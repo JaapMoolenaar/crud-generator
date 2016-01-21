@@ -2,8 +2,6 @@
 
 namespace Appzcoder\CrudGenerator\Commands;
 
-use Illuminate\Console\GeneratorCommand;
-
 class CrudControllerCommand extends GeneratorCommand
 {
     /**
@@ -78,117 +76,19 @@ class CrudControllerCommand extends GeneratorCommand
         if ($this->option('required-fields') != '') {
             $validationRules = "\$this->validate(\$request, " . $this->option('required-fields') . ");\n";
         }
+        
+        $data = compact([
+            'viewPath',
+            'crudName',
+            'crudNameSingular',
+            'modelName',
+            'routeGroup',
+            'validationRules',
+        ]);
+        
+        $stub = $this->makeFromBladeString($stub, $data);
 
         return $this->replaceNamespace($stub, $name)
-            ->replaceViewPath($stub, $viewPath)
-            ->replaceCrudName($stub, $crudName)
-            ->replaceCrudNameSingular($stub, $crudNameSingular)
-            ->replaceModelName($stub, $modelName)
-            ->replaceRouteGroup($stub, $routeGroup)
-            ->replaceValidationRules($stub, $validationRules)
-            ->replaceClass($stub, $name);
+                    ->replaceClass($stub, $name);
     }
-
-    /**
-     * Replace the viewPath for the given stub.
-     *
-     * @param  string  $stub
-     * @param  string  $viewPath
-     *
-     * @return $this
-     */
-    protected function replaceViewPath(&$stub, $viewPath)
-    {
-        $stub = str_replace(
-            '{{viewPath}}', $viewPath, $stub
-        );
-
-        return $this;
-    }
-
-    /**
-     * Replace the crudName for the given stub.
-     *
-     * @param  string  $stub
-     * @param  string  $crudName
-     *
-     * @return $this
-     */
-    protected function replaceCrudName(&$stub, $crudName)
-    {
-        $stub = str_replace(
-            '{{crudName}}', $crudName, $stub
-        );
-
-        return $this;
-    }
-
-    /**
-     * Replace the crudNameSingular for the given stub.
-     *
-     * @param  string  $stub
-     * @param  string  $crudNameSingular
-     *
-     * @return $this
-     */
-    protected function replaceCrudNameSingular(&$stub, $crudNameSingular)
-    {
-        $stub = str_replace(
-            '{{crudNameSingular}}', $crudNameSingular, $stub
-        );
-
-        return $this;
-    }
-
-    /**
-     * Replace the modelName for the given stub.
-     *
-     * @param  string  $stub
-     * @param  string  $modelName
-     *
-     * @return $this
-     */
-    protected function replaceModelName(&$stub, $modelName)
-    {
-        $stub = str_replace(
-            '{{modelName}}', $modelName, $stub
-        );
-
-        return $this;
-    }
-
-    /**
-     * Replace the routeGroup for the given stub.
-     *
-     * @param  string  $stub
-     * @param  string  $routeGroup
-     *
-     * @return $this
-     */
-    protected function replaceRouteGroup(&$stub, $routeGroup)
-    {
-        $stub = str_replace(
-            '{{routeGroup}}', $routeGroup, $stub
-        );
-
-        return $this;
-    }
-
-    /**
-     * Replace the validationRules for the given stub.
-     *
-     * @param  string  $stub
-     * @param  string  $validationRules
-     *
-     * @return $this
-     */
-    protected function replaceValidationRules(&$stub, $validationRules)
-    {
-        $stub = str_replace(
-            '{{validationRules}}', $validationRules, $stub
-        );
-
-        return $this;
-    }
-
 }

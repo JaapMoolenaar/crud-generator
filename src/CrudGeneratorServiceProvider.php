@@ -3,6 +3,7 @@
 namespace Appzcoder\CrudGenerator;
 
 use Illuminate\Support\ServiceProvider;
+use Appzcoder\CrudGenerator\View\Factory as ViewFactory;
 
 class CrudGeneratorServiceProvider extends ServiceProvider
 {
@@ -43,6 +44,23 @@ class CrudGeneratorServiceProvider extends ServiceProvider
             'Appzcoder\CrudGenerator\Commands\CrudMigrationCommand',
             'Appzcoder\CrudGenerator\Commands\CrudViewCommand'
         );
+        
+        // Register the BladeStringViewFactory which allows us to
+        // parse a blade template passed as string (bascially what the blade 
+        // engine does by reading a file and then parsing it)
+		$this->app->singleton('BladeStringViewFactory', function($app)
+		{
+			$resolver = $app['view.engine.resolver'];
+			$finder = $app['view.finder'];
+			$events = $app['events'];
+
+			$env = new ViewFactory($resolver, $finder, $events);
+            
+			$env->setContainer($app);
+			$env->share('app', $app);
+
+			return $env;
+		});
     }
 
 }

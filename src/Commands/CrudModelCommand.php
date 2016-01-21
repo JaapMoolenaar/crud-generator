@@ -2,8 +2,6 @@
 
 namespace Appzcoder\CrudGenerator\Commands;
 
-use Illuminate\Console\GeneratorCommand;
-
 class CrudModelCommand extends GeneratorCommand
 {
     /**
@@ -67,44 +65,14 @@ class CrudModelCommand extends GeneratorCommand
         $table = $this->option('table') ?: $this->argument('name');
         $fillable = $this->option('fillable');
 
+        $data = compact([
+            'table',
+            'fillable',
+        ]);
+        
+        $stub = $this->makeFromBladeString($stub, $data);
+        
         return $this->replaceNamespace($stub, $name)
-            ->replaceTable($stub, $table)
-            ->replaceFillable($stub, $fillable)
-            ->replaceClass($stub, $name);
+                    ->replaceClass($stub, $name);
     }
-
-    /**
-     * Replace the table for the given stub.
-     *
-     * @param  string  $stub
-     * @param  string  $table
-     *
-     * @return $this
-     */
-    protected function replaceTable(&$stub, $table)
-    {
-        $stub = str_replace(
-            '{{table}}', $table, $stub
-        );
-
-        return $this;
-    }
-
-    /**
-     * Replace the fillable for the given stub.
-     *
-     * @param  string  $stub
-     * @param  string  $fillable
-     *
-     * @return $this
-     */
-    protected function replaceFillable(&$stub, $fillable)
-    {
-        $stub = str_replace(
-            '{{fillable}}', $fillable, $stub
-        );
-
-        return $this;
-    }
-
 }
