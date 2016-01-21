@@ -1,6 +1,6 @@
-@extends('layouts.master')
+@extends('%%extendsLayout%%')
 
-@section('content')
+@section('%%sectionName%%')
 
     <h1>Create New %%modelName%%</h1>
     <hr/>

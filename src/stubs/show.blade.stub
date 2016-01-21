@@ -1,6 +1,6 @@
-@extends('layouts.master')
+@extends('%%extendsLayout%%')
 
-@section('content')
+@section('%%sectionName%%')
 
     <h1>%%modelName%%</h1>
     <div class="table-responsive">

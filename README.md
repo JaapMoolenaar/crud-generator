@@ -165,6 +165,22 @@ You can customize the generator's stub files/templates to achieve your need.
     ```
 3. From the directory **/resources/crud-generator/** you can modify or customize the stub files.
 
+
+### Other configuration options
+    
+You're able to use another layout to extend than 'layouts.master', by using this configuration option:
+(If it's anything other than the default 'layouts.master', the layout stub will not be copied)
+
+    ```
+    'extend_layout' => 'layouts.app',
+    ```
+
+If you use another section name in your layout, set it using:
+
+    ```
+    'section_name' => 'sub_content',
+    ```
+
 ##Authors
 
 [Sohel Amin](http://www.sohelamin.com)

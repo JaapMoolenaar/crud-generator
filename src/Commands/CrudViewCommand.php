@@ -178,6 +178,8 @@ class CrudViewCommand extends Command
             '%%modelName%%'         => $modelName,
             '%%routeGroup%%'        => $routeGroup,
             '%%formFieldsHtml%%'    => $formFieldsHtml,
+            '%%extendsLayout%%'     => config('crudgenerator.extend_layout', 'layouts.master'),
+            '%%sectionName%%'       => config('crudgenerator.section_name', 'content'),
         ];
 
         // For index.blade.php file
@@ -216,21 +218,24 @@ class CrudViewCommand extends Command
             File::put($newShowFile, str_replace(array_keys($replaces), $replaces, File::get($newShowFile)));
         }
 
-        // For layouts/master.blade.php file
-        $layoutsDirPath = base_path('resources/views/layouts/');
-        if (!File::isDirectory($layoutsDirPath)) {
-            File::makeDirectory($layoutsDirPath);
-        }
+        // Should we include a master template?
+        if(config('crudgenerator.extend_layout', 'layouts.master') == 'layouts.master') {
+            // For layouts/master.blade.php file
+            $layoutsDirPath = base_path('resources/views/layouts/');
+            if (!File::isDirectory($layoutsDirPath)) {
+                File::makeDirectory($layoutsDirPath);
+            }
 
-        $layoutsFile = $this->viewDirectoryPath . 'master.blade.stub';
-        $newLayoutsFile = $layoutsDirPath . 'master.blade.php';
+            $layoutsFile = $this->viewDirectoryPath . 'master.blade.stub';
+            $newLayoutsFile = $layoutsDirPath . 'master.blade.php';
 
-        if (!File::exists($newLayoutsFile)) {
-            if (!File::copy($layoutsFile, $newLayoutsFile)) {
-                echo "failed to copy $layoutsFile...\n";
+            if (!File::exists($newLayoutsFile)) {
+                if (!File::copy($layoutsFile, $newLayoutsFile)) {
+                    echo "failed to copy $layoutsFile...\n";
+                }
             }
         }
-
+        
         $this->info('View created successfully.');
     }
 
