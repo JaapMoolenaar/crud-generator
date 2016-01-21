@@ -1,6 +1,5 @@
 {
     "name": "jaapmoolenaar.nl/crud-generator",
-    "license": "MIT",
     "description": "Laravel 5 CRUD Generator",
     "keywords": [
         "laravel",
@@ -22,6 +21,7 @@
     ],
     "require": {
         "php": ">=5.5.9",
+        "illuminate/support": "5.1.*",
         "illuminate/support": "5.1.*|5.2.*"
     },
     "autoload": {
