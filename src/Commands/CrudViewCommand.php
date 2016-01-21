@@ -63,6 +63,21 @@ class CrudViewCommand extends Command
         'time' => 'time',
         'boolean' => 'radio',
     ];
+    
+    /**
+     *  Form field types not to be added to the overview table in the index templates.
+     *
+     * @var array
+     */
+    protected $typesNotShownInOverview = [
+        'text',
+        'mediumtext',
+        'longtext',
+        'json',
+        'jsonb',
+        'binary',
+        'password',
+    ];
 
     /**
      * Create a new command instance.
@@ -134,7 +149,14 @@ class CrudViewCommand extends Command
             }
 
             $field = $value['name'];
-            $label = ucwords(str_replace('_', ' ', $field));
+            $fieldType = $value['type'];
+
+            if(in_array($fieldType, $this->typesNotShownInOverview)) {
+                continue;
+            }       
+            
+            $label = ucwords(str_replace('_', ' ', $field));     
+            
             $formHeadingHtml .= '<th>' . $label . '</th>';
 
             if ($i == 0) {
@@ -247,9 +269,25 @@ EOD;
      *
      * @return string
      */
+    protected function doTypeLookup($type)
+    {
+        if(array_key_exists($type, $this->typeLookup)) {
+            return $this->typeLookup[$type];
+        }
+        
+        return false;
+    }
+    
+    /**
+     * Form field generator.
+     *
+     * @param  string  $item
+     *
+     * @return string
+     */
     protected function createField($item)
     {
-        switch ($this->typeLookup[$item['type']]) {
+        switch ($this->doTypeLookup($item['type'])) {
             case 'password':
                 return $this->createPasswordField($item);
                 break;
