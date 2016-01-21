@@ -367,10 +367,10 @@ EOD;
         $field =
             <<<EOD
             <div class="checkbox">
-                <label>{!! Form::radio('%1\$s', '1') !!} Yes</label>
+                <label>{!! Form::radio('%1\$s', '1') !!} <span>Yes</span></label>
             </div>
             <div class="checkbox">
-                <label>{!! Form::radio('%1\$s', '0', true) !!} No</label>
+                <label>{!! Form::radio('%1\$s', '0', true) !!} <span>No</span></label>
             </div>
 EOD;
 
