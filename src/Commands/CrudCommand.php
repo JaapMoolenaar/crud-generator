@@ -108,6 +108,7 @@ class CrudCommand extends Command
             if(count($middleware)) {
                 $isAdded = File::append($routeFile,
                     "\nRoute::group(['middleware' => ['".implode("','", $middleware)."']], function () {"
+                    . "\n\tRoute::get('" . $routeName . "/{id}/predelete', '" . $controller . "@predelete');;"
                     . "\n\tRoute::resource('" . $routeName . "', '" . $controller . "');"
                     . "\n});"
                 );

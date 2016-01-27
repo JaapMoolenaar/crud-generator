@@ -4,18 +4,22 @@ return [
     'tableheading_id' => 'ID',
     'tableheading_actions' => 'Actions',
     
-    'heading_show' => ':name',
-    'heading_create' => 'Add new :name',
-    'heading_edit' => 'Edit :name',
-    'heading_index' => ':name_plural',
+    'heading_show' => '%%modelName%%',
+    'heading_create' => 'Add new %%crudNameSingular%%',
+    'heading_edit' => 'Edit %%crudNameSingular%%',
+    'heading_index' => '%%crudNameCap%%',
+    'heading_predelete' => 'Delete %%crudNameSingular%%',
     
-    'button_gocreate' => 'Add new :name',
+    'label_confirmdelete' => 'Yes, I am sure I want to delete this %%crudNameSingular%%!',
+    
+    'button_gocreate' => 'Add new %%crudNameSingular%%',
     'button_goedit' => 'Edit',
     'button_godelete' => 'Delete',
     'button_goback' => 'Back',
     'button_edit' => 'Save',
     'button_create' => 'Add',
     'button_cancel' => 'Cancel',
+    'button_delete' => 'Delete',
     
 %%languageStrings%%
 ];

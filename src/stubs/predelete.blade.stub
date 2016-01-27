@@ -1,0 +1,46 @@
+@extends('layouts.app')
+
+@section('content')
+{!! Form::open([
+    'method'=>'DELETE',
+    'url' => ['users', $user->id],
+    'style' => 'display:inline'
+]) !!}
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-8 col-md-offset-2">
+            <div class="panel panel-default">
+                <div class="panel-heading">{!! trans('%%crudName%%.heading_predelete') !!}</div>
+                <div class="panel-body">
+
+                    @if ($errors->any())
+                        <div class="alert alert-danger">
+                            {!! implode('<br>', $errors->all()) !!}
+                        </div>
+                    @endif
+
+                    <div class="form-group {{ $errors->has('name') ? 'has-error' : ''}}">
+                        <div class="col-sm-12">
+                            <div class="checkbox">
+                                <label>{!! Form::checkbox('confirm', '1') !!} <span>{!! trans('%%crudName%%.label_confirmdelete') !!}</span></label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="col-sm-12">
+                            <a href="{{ url('%%routeGroup%%%%crudName%%') }}" class="btn btn-default">{!! trans('%%crudName%%.button_cancel') !!}</a>
+                            &nbsp;
+                            {!! Form::submit(trans('%%crudName%%.button_delete'), ['class' => 'btn btn-danger']) !!}
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{!! Form::close() !!}
+@endsection

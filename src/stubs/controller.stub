@@ -87,13 +87,27 @@ class DummyClass extends Controller
      */
     public function update($id, Request $request)
     {
-        {{$validationRules}}
+        {!! $validationRules !!}
         ${{$crudNameSingular}} = {{$modelName}}::findOrFail($id);
         ${{$crudNameSingular}}->update($request->all());
 
         \Flash::success('{{$modelName}} updated!');
 
         return redirect('{{$routeGroup}}{{$crudName}}');
+    }
+
+    /**
+     * Ask before we remove the specified resource from storage.
+     *
+     * @param  int  $id
+     *
+     * @return Response
+     */
+    public function predelete($id)
+    {        
+        ${{$crudNameSingular}} = {{$modelName}}::findOrFail($id);
+
+        return view('{{$viewPath}}{{$crudName}}.predelete', compact('{{$crudNameSingular}}'));
     }
 
     /**
@@ -111,5 +125,4 @@ class DummyClass extends Controller
 
         return redirect('{{$routeGroup}}{{$crudName}}');
     }
-
 }

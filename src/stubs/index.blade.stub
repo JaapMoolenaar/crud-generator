@@ -5,16 +5,16 @@
 <div class="container">
     <div class="row">
         <div class="panel panel-default">
-            <div class="panel-heading">{!! trans('%%crudName%%.heading_index', ['name' => '%%modelName%%', 'name_plural' => '%%crudNameCap%%']) !!}</div>
+            <div class="panel-heading">{!! trans('%%crudName%%.heading_index') !!}</div>
             <div class="panel-body">
-                <p><a href="{{ url('%%routeGroup%%%%crudName%%/create') }}" class="btn btn-primary">{!! trans('%%crudName%%.button_gocreate', ['name' => '%%modelName%%', 'name_plural' => '%%crudNameCap%%']) !!}</a></p>
+                <p><a href="{{ url('%%routeGroup%%%%crudName%%/create') }}" class="btn btn-primary">{!! trans('%%crudName%%.button_gocreate') !!}</a></p>
 
                 @include('flash::message')
                 <div class="table-responsive">
                     <table class="table table-bordered table-striped table-hover">
                         <thead>
                             <tr>
-                                %%formHeadingHtml%%<th>{!! trans('%%crudName%%.tableheading_actions', ['name' => '%%modelName%%', 'name_plural' => '%%crudNameCap%%']) !!}</th>
+                                %%formHeadingHtml%%<th>{!! trans('%%crudName%%.tableheading_actions') !!}</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -22,15 +22,9 @@
                             <tr>
                                 %%formBodyHtml%%
                                 <td>
-                                    <a href="{{ url('%%routeGroup%%%%crudName%%/' . $item->id . '/edit') }}" class="btn btn-primary btn-xs">{!! trans('%%crudName%%.button_goedit', ['name' => '%%modelName%%', 'name_plural' => '%%crudNameCap%%']) !!}</a>
+                                    <a href="{{ url('%%routeGroup%%%%crudName%%/' . $item->id . '/edit') }}" class="btn btn-primary btn-xs">{!! trans('%%crudName%%.button_goedit') !!}</a>
                                     &nbsp;
-                                    {!! Form::open([
-                                        'method'=>'DELETE',
-                                        'url' => ['%%routeGroup%%%%crudName%%', $item->id],
-                                        'style' => 'display:inline'
-                                    ]) !!}
-                                        <button type="submit" class="btn btn-danger btn-xs">{!! trans('%%crudName%%.button_godelete', ['name' => '%%modelName%%', 'name_plural' => '%%crudNameCap%%']) !!}</button>
-                                    {!! Form::close() !!}
+                                    <a href="{{ url('%%routeGroup%%%%crudName%%/' . $item->id . '/predelete') }}" class="btn btn-danger btn-xs">{!! trans('%%crudName%%.button_godelete') !!}</a>
                                 </td>
                             </tr>
                         @endforeach

@@ -5,9 +5,9 @@
 <div class="container">
     <div class="row">
         <div class="panel panel-default">
-            <div class="panel-heading">{!! trans('%%crudName%%.heading_show', ['name' => '%%modelName%%', 'name_plural' => '%%crudNameCap%%']) !!}</div>
+            <div class="panel-heading">{!! trans('%%crudName%%.heading_show') !!}</div>
             <div class="panel-body">
-                <p><a href="{{ url('%%routeGroup%%%%crudName%%') }}" class="btn btn-default">{!! trans('%%crudName%%.button_goback', ['name' => '%%modelName%%', 'name_plural' => '%%crudNameCap%%']) !!}</a></p>
+                <p><a href="{{ url('%%routeGroup%%%%crudName%%') }}" class="btn btn-default">{!! trans('%%crudName%%.button_goback') !!}</a></p>
 
                 <div class="table-responsive">
                     <table class="table table-bordered table-striped table-hover">

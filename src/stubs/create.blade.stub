@@ -7,24 +7,22 @@
     <div class="row">
         <div class="col-md-8 col-md-offset-2">
             <div class="panel panel-default">
-                <div class="panel-heading">{!! trans('%%crudName%%.heading_create', ['name' => '%%modelName%%', 'name_plural' => '%%crudNameCap%%']) !!}</div>
+                <div class="panel-heading">{!! trans('%%crudName%%.heading_create') !!}</div>
                 <div class="panel-body">
     
                     @if ($errors->any())
-                        <ul class="alert alert-danger">
-                            @foreach ($errors->all() as $error)
-                                <li>{{ $error }}</li>
-                            @endforeach
-                        </ul>
+                        <div class="alert alert-danger">
+                            {!! implode('<br>', $errors->all()) !!}
+                        </div>
                     @endif
 
 %%formFieldsHtml%%
 
                     <div class="form-group">
                         <div class="col-sm-offset-3 col-sm-6">
-                            <a href="{{ url('%%routeGroup%%%%crudName%%') }}" class="btn btn-default">{!! trans('%%crudName%%.button_cancel', ['name' => '%%modelName%%', 'name_plural' => '%%crudNameCap%%']) !!}</a>
+                            <a href="{{ url('%%routeGroup%%%%crudName%%') }}" class="btn btn-default">{!! trans('%%crudName%%.button_cancel') !!}</a>
                             &nbsp;
-                            {!! Form::submit(trans('%%crudName%%.button_create', ['name' => '%%modelName%%', 'name_plural' => '%%crudNameCap%%']), ['class' => 'btn btn-primary']) !!}
+                            {!! Form::submit(trans('%%crudName%%.button_create'), ['class' => 'btn btn-primary']) !!}
                         </div>
                     </div>
 
