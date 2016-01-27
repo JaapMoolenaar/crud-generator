@@ -42,7 +42,7 @@ class DummyClass extends Controller
      */
     public function store(Request $request)
     {
-        {{$validationRules}}
+        {!! $validationRules !!}
         {{$modelName}}::create($request->all());
 
         \Flash::success('{{$modelName}} added!');
