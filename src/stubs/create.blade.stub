@@ -1,27 +1,38 @@
 @extends('%%extendsLayout%%')
 
 @section('%%sectionName%%')
+{!! Form::open(['url' => '%%routeGroup%%%%crudName%%', 'class' => 'form-horizontal']) !!}
 
-    <h1>Create New %%modelName%%</h1>
-    <hr/>
+<div class="container">
+    <div class="row">
+        <div class="col-md-8 col-md-offset-2">
+            <div class="panel panel-default">
+                <div class="panel-heading">{!! trans('%%crudName%%.heading_create', ['name' => '%%modelName%%', 'name_plural' => '%%crudNameCap%%']) !!}</div>
+                <div class="panel-body">
+    
+                    @if ($errors->any())
+                        <ul class="alert alert-danger">
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    @endif
 
-    {!! Form::open(['url' => '%%routeGroup%%%%crudName%%', 'class' => 'form-horizontal']) !!}
+%%formFieldsHtml%%
 
-    %%formFieldsHtml%%
+                    <div class="form-group">
+                        <div class="col-sm-offset-3 col-sm-6">
+                            <a href="{{ url('%%routeGroup%%%%crudName%%') }}" class="btn btn-default">{!! trans('%%crudName%%.button_cancel', ['name' => '%%modelName%%', 'name_plural' => '%%crudNameCap%%']) !!}</a>
+                            &nbsp;
+                            {!! Form::submit(trans('%%crudName%%.button_create', ['name' => '%%modelName%%', 'name_plural' => '%%crudNameCap%%']), ['class' => 'btn btn-primary']) !!}
+                        </div>
+                    </div>
 
-    <div class="form-group">
-        <div class="col-sm-offset-3 col-sm-3">
-            {!! Form::submit('Create', ['class' => 'btn btn-primary form-control']) !!}
+                </div>
+            </div>
         </div>
     </div>
-    {!! Form::close() !!}
+</div>
 
-    @if ($errors->any())
-        <ul class="alert alert-danger">
-            @foreach ($errors->all() as $error)
-                <li>{{ $error }}</li>
-            @endforeach
-        </ul>
-    @endif
-
+{!! Form::close() !!}
 @endsection

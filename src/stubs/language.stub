@@ -1,0 +1,21 @@
+<?php
+
+return [
+    'tableheading_id' => 'ID',
+    'tableheading_actions' => 'Actions',
+    
+    'heading_show' => ':name',
+    'heading_create' => 'Add new :name',
+    'heading_edit' => 'Edit :name',
+    'heading_index' => ':name_plural',
+    
+    'button_gocreate' => 'Add new :name',
+    'button_goedit' => 'Edit',
+    'button_godelete' => 'Delete',
+    'button_goback' => 'Back',
+    'button_edit' => 'Save',
+    'button_create' => 'Add',
+    'button_cancel' => 'Cancel',
+    
+%%languageStrings%%
+];

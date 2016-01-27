@@ -1,31 +1,42 @@
 @extends('%%extendsLayout%%')
 
 @section('%%sectionName%%')
+{!! Form::model($%%crudNameSingular%%, [
+    'method' => 'PATCH',
+    'url' => ['%%routeGroup%%%%crudName%%', $%%crudNameSingular%%->id],
+    'class' => 'form-horizontal'
+]) !!}
 
-    <h1>Edit %%modelName%%</h1>
-    <hr/>
+<div class="container">
+    <div class="row">
+        <div class="col-md-8 col-md-offset-2">
+            <div class="panel panel-default">
+                <div class="panel-heading">{!! trans('%%crudName%%.heading_edit', ['name' => '%%modelName%%', 'name_plural' => '%%crudNameCap%%']) !!}</div>
+                <div class="panel-body">
 
-    {!! Form::model($%%crudNameSingular%%, [
-        'method' => 'PATCH',
-        'url' => ['%%routeGroup%%%%crudName%%', $%%crudNameSingular%%->id],
-        'class' => 'form-horizontal'
-    ]) !!}
+                    @if ($errors->any())
+                        <ul class="alert alert-danger">
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    @endif
 
-    %%formFieldsHtml%%
+%%formFieldsHtml%%
 
-    <div class="form-group">
-        <div class="col-sm-offset-3 col-sm-3">
-            {!! Form::submit('Update', ['class' => 'btn btn-primary form-control']) !!}
+                    <div class="form-group">
+                        <div class="col-sm-offset-3 col-sm-6">
+                            <a href="{{ url('%%routeGroup%%%%crudName%%') }}" class="btn btn-default">{!! trans('%%crudName%%.button_cancel', ['name' => '%%modelName%%', 'name_plural' => '%%crudNameCap%%']) !!}</a>
+                            &nbsp;
+                            {!! Form::submit(trans('%%crudName%%.button_edit', ['name' => '%%modelName%%', 'name_plural' => '%%crudNameCap%%']), ['class' => 'btn btn-primary']) !!}
+                        </div>
+                    </div>
+
+                </div>
+            </div>
         </div>
     </div>
-    {!! Form::close() !!}
+</div>
 
-    @if ($errors->any())
-        <ul class="alert alert-danger">
-            @foreach ($errors->all() as $error)
-                <li>{{ $error }}</li>
-            @endforeach
-        </ul>
-    @endif
-
+{!! Form::close() !!}
 @endsection

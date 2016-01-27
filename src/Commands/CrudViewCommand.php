@@ -30,7 +30,7 @@ class CrudViewCommand extends Command
      *
      * @var string
      */
-    protected $viewDirectoryPath;
+    protected $stubsPath;
 
     /**
      *  Form field types collection.
@@ -79,6 +79,43 @@ class CrudViewCommand extends Command
         'password',
     ];
 
+    
+    /**
+     * Name of crud item (lc, plural)
+     *
+     * @var string
+     */
+    protected $crudName;
+    
+    /**
+     * Name of crud item (ucfirst, plural)
+     *
+     * @var string
+     */
+    protected $crudNameCap;
+    
+    /**
+     * Name of crud item (lc, singular)
+     *
+     * @var string
+     */
+    protected $crudNameSingular;
+    
+    /**
+     * Name of the model (ucfirst, singular)
+     *
+     * @var string
+     */
+    protected $modelName;
+    
+    /**
+     * A route group to set for this route
+     *
+     * @var string
+     */
+    protected $routeGroup;
+
+    
     /**
      * Create a new command instance.
      *
@@ -88,7 +125,7 @@ class CrudViewCommand extends Command
     {
         parent::__construct();
 
-        $this->viewDirectoryPath = config('crudgenerator.custom_template')
+        $this->stubsPath = config('crudgenerator.custom_template')
         ? config('crudgenerator.path')
         : __DIR__ . '/../stubs/';
     }
@@ -100,36 +137,51 @@ class CrudViewCommand extends Command
      */
     public function handle()
     {
-        $crudName = $this->argument('name');
-        $crudNameCap = ucwords($crudName);
-        $crudNameSingular = str_singular($crudName);
-        $modelName = ucwords($crudNameSingular);
-        $routeGroup = ($this->option('route-group')) ? $this->option('route-group') . '/' : $this->option('route-group');
+        $this->crudName = $this->argument('name');
+        $this->crudNameCap = ucwords($this->crudName);
+        $this->crudNameSingular = str_singular($this->crudName);
+        $this->modelName = ucwords($this->crudNameSingular);
+        $this->routeGroup = ($this->option('route-group')) ? $this->option('route-group') . '/' : $this->option('route-group');
 
-        $viewDirectory = base_path('resources/views/');
+        $viewDirectory = rtrim(config('view.paths')[0], '\/').DIRECTORY_SEPARATOR;
         if ($this->option('view-path')) {
             $userPath = $this->option('view-path');
-            $path = $viewDirectory . $userPath . '/' . $crudName . '/';
+            $path = $viewDirectory . $userPath . DIRECTORY_SEPARATOR . $this->crudName . DIRECTORY_SEPARATOR;
         } else {
-            $path = $viewDirectory . $crudName . '/';
+            $path = $viewDirectory . $this->crudName . DIRECTORY_SEPARATOR;
         }
-
+        
         if (!File::isDirectory($path)) {
             File::makeDirectory($path, 0755, true);
         }
+        
+        $this->info('Creating views in "'.$path.'"');
+        
+        
+        $languagePath = rtrim(base_path('resources/lang/en'), '\/').DIRECTORY_SEPARATOR;
+
+        $this->info('Creating languagefile in "'.$languagePath.'"');
+        
 
         $fields = $this->option('fields');
         $fieldsArray = explode(',', $fields);
 
         $formFields = array();
-        $x = 0;
         foreach ($fieldsArray as $item) {
             $itemArray = explode(':', $item);
-            $formFields[$x]['name'] = trim($itemArray[0]);
-            $formFields[$x]['type'] = trim($itemArray[1]);
-            $formFields[$x]['required'] = (isset($itemArray[2]) && (trim($itemArray[2]) == 'req' || trim($itemArray[2]) == 'required')) ? true : false;
+            $field = [
+                'name' => trim($itemArray[0]),
+                'type' => trim($itemArray[1]),
+                'required' => (isset($itemArray[2]) && (trim($itemArray[2]) == 'req' || trim($itemArray[2]) == 'required')) ? true : false
+            ];
 
-            $x++;
+            if(!$this->doTypeLookup($field['type'])) {
+                $this->error('Type "'.$field['type'].'" does not exist');
+
+                $field['type'] = 'string';
+            }
+            
+            $formFields[] = $field;
         }
 
         $formFieldsHtml = '';
@@ -141,6 +193,7 @@ class CrudViewCommand extends Command
         $formHeadingHtml = '';
         $formBodyHtml = '';
         $formBodyHtmlForShowView = '';
+        $languageStrings = '';
 
         $i = 0;
         foreach ($formFields as $key => $value) {
@@ -150,21 +203,24 @@ class CrudViewCommand extends Command
 
             $field = $value['name'];
             $fieldType = $value['type'];
+            $label = ucwords(str_replace('_', ' ', $field));
+            
+            $languageStrings .= "    '" . $field . "' => '" . $label . "',\n";
+            
 
             if(in_array($fieldType, $this->typesNotShownInOverview)) {
                 continue;
             }       
-            
-            $label = ucwords(str_replace('_', ' ', $field));     
-            
-            $formHeadingHtml .= '<th>' . $label . '</th>';
+                        
+            $formHeadingHtml .= '<th>{{ trans(\'' . $this->crudName. '.' . $field . '\') }}</th>';
 
             if ($i == 0) {
-                $formBodyHtml .= '<td><a href="{{ url(\''.$routeGroup.$crudName.'\', $item->id) }}">{{ $item->' . $field . ' }}</a></td>';
+                $formBodyHtml .= '<td><a href="{{ url(\''.$this->routeGroup.$this->crudName.'\', $item->id) }}">{{ $item->' . $field . ' }}</a></td>';
             } else {
                 $formBodyHtml .= '<td>{{ $item->' . $field . ' }}</td>';
             }
-            $formBodyHtmlForShowView .= '<td> {{ $'.$crudNameSingular.'->' . $field . ' }} </td>';
+            
+            $formBodyHtmlForShowView .= '<td> {{ $'.$this->crudNameSingular.'->' . $field . ' }} </td>';
 
             $i++;
         }
@@ -172,39 +228,49 @@ class CrudViewCommand extends Command
         $replaces = [
             '%%formHeadingHtml%%'   => $formHeadingHtml,
             '%%formBodyHtml%%'      => $formBodyHtml,
-            '%%crudName%%'          => $crudName,
-            '%%crudNameSingular%%'  => $crudNameSingular,
-            '%%crudNameCap%%'       => $crudNameCap,
-            '%%modelName%%'         => $modelName,
-            '%%routeGroup%%'        => $routeGroup,
+            '%%crudName%%'          => $this->crudName,
+            '%%crudNameSingular%%'  => $this->crudNameSingular,
+            '%%crudNameCap%%'       => $this->crudNameCap,
+            '%%modelName%%'         => $this->modelName,
+            '%%routeGroup%%'        => $this->routeGroup,
             '%%formFieldsHtml%%'    => $formFieldsHtml,
+            '%%languageStrings%%'   => $languageStrings,
             '%%extendsLayout%%'     => config('crudgenerator.extend_layout', 'layouts.master'),
             '%%sectionName%%'       => config('crudgenerator.section_name', 'content'),
         ];
         
+        // For language file
+        $languageFile = $this->stubsPath . 'language.stub';
+        $newLanguageFile = $languagePath . $this->crudName . '.php';
+        if (!File::copy($languageFile, $newLanguageFile)) {
+            $this->error("failed to copy $languageFile...\n");
+        } else {
+            File::put($newLanguageFile, str_replace(array_keys($replaces), $replaces, File::get($newLanguageFile)));
+        }
+        
         // For index.blade.php file
-        $indexFile = $this->viewDirectoryPath . 'index.blade.stub';
+        $indexFile = $this->stubsPath . 'index.blade.stub';
         $newIndexFile = $path . 'index.blade.php';
         if (!File::copy($indexFile, $newIndexFile)) {
-            echo "failed to copy $indexFile...\n";
+            $this->error("failed to copy $indexFile...\n");
         } else {
             File::put($newIndexFile, str_replace(array_keys($replaces), $replaces, File::get($newIndexFile)));
         }
 
         // For create.blade.php file
-        $createFile = $this->viewDirectoryPath . 'create.blade.stub';
+        $createFile = $this->stubsPath . 'create.blade.stub';
         $newCreateFile = $path . 'create.blade.php';
         if (!File::copy($createFile, $newCreateFile)) {
-            echo "failed to copy $createFile...\n";
+            $this->error("failed to copy $createFile...\n");
         } else {
             File::put($newCreateFile, str_replace(array_keys($replaces), $replaces, File::get($newCreateFile)));
         }
 
         // For edit.blade.php file
-        $editFile = $this->viewDirectoryPath . 'edit.blade.stub';
+        $editFile = $this->stubsPath . 'edit.blade.stub';
         $newEditFile = $path . 'edit.blade.php';
         if (!File::copy($editFile, $newEditFile)) {
-            echo "failed to copy $editFile...\n";
+            $this->error("failed to copy $editFile...\n");
         } else {
             File::put($newEditFile, str_replace(array_keys($replaces), $replaces, File::get($newEditFile)));
         }
@@ -214,10 +280,10 @@ class CrudViewCommand extends Command
         $replaces['%%formBodyHtml%%'] = $formBodyHtmlForShowView;
         
         // For show.blade.php file
-        $showFile = $this->viewDirectoryPath . 'show.blade.stub';
+        $showFile = $this->stubsPath . 'show.blade.stub';
         $newShowFile = $path . 'show.blade.php';
         if (!File::copy($showFile, $newShowFile)) {
-            echo "failed to copy $showFile...\n";
+            $this->error("failed to copy $showFile...\n");
         } else {
             File::put($newShowFile, str_replace(array_keys($replaces), $replaces, File::get($newShowFile)));
         }
@@ -230,12 +296,12 @@ class CrudViewCommand extends Command
                 File::makeDirectory($layoutsDirPath);
             }
 
-            $layoutsFile = $this->viewDirectoryPath . 'master.blade.stub';
+            $layoutsFile = $this->stubsPath . 'master.blade.stub';
             $newLayoutsFile = $layoutsDirPath . 'master.blade.php';
 
             if (!File::exists($newLayoutsFile)) {
                 if (!File::copy($layoutsFile, $newLayoutsFile)) {
-                    echo "failed to copy $layoutsFile...\n";
+                    $this->error("failed to copy $layoutsFile...\n");
                 }
             }
         }
@@ -253,15 +319,18 @@ class CrudViewCommand extends Command
      */
     protected function wrapField($item, $field)
     {
+        // the indentation consists of tabs expanded to 4 spaces
+        $indentation = str_repeat("    ", config('crudgenerator.formgroupindent', 5));
+        
         $formGroup =
-            <<<EOD
-            <div class="form-group {{ \$errors->has('%1\$s') ? 'has-error' : ''}}">
-                {!! Form::label('%1\$s', '%2\$s: ', ['class' => 'col-sm-3 control-label']) !!}
-                <div class="col-sm-6">
-                    %3\$s
-                    {!! \$errors->first('%1\$s', '<p class="help-block">:message</p>') !!}
-                </div>
-            </div>\n
+<<<EOD
+$indentation<div class="form-group {{ \$errors->has('%1\$s') ? 'has-error' : ''}}">
+$indentation    {!! Form::label('%1\$s', trans('{$this->crudName}.%1\$s').': ', ['class' => 'col-sm-3 control-label']) !!}
+$indentation    <div class="col-sm-6">
+$indentation        %3\$s
+$indentation        {!! \$errors->first('%1\$s', '<p class="help-block">:message</p>') !!}
+$indentation    </div>
+$indentation</div>\n
 EOD;
 
         return sprintf($formGroup, $item['name'], ucwords(strtolower(str_replace('_', ' ', $item['name']))), $field);
@@ -291,7 +360,7 @@ EOD;
      * @return string
      */
     protected function createField($item)
-    {
+    {        
         switch ($this->doTypeLookup($item['type'])) {
             case 'password':
                 return $this->createPasswordField($item);
@@ -317,8 +386,9 @@ EOD;
      */
     protected function createFormField($item)
     {
+        
         $required = ($item['required'] === true) ? ", 'required' => 'required'" : "";
-
+        
         return $this->wrapField(
             $item,
             "{!! Form::" . $this->typeLookup[$item['type']] . "('" . $item['name'] . "', null, ['class' => 'form-control'$required]) !!}"
@@ -368,14 +438,17 @@ EOD;
      */
     protected function createRadioField($item)
     {
+        // the indentation consists of tabs expanded to 4 spaces
+        $indentation = str_repeat("    ", 1);
+        
         $field =
-            <<<EOD
-            <div class="checkbox">
-                <label>{!! Form::radio('%1\$s', '1') !!} <span>Yes</span></label>
-            </div>
-            <div class="checkbox">
-                <label>{!! Form::radio('%1\$s', '0', true) !!} <span>No</span></label>
-            </div>
+<<<EOD
+$indentation<div class="checkbox">
+$indentation    <label>{!! Form::radio('%1\$s', '1') !!} <span>Yes</span></label>
+$indentation</div>
+$indentation<div class="checkbox">
+$indentation    <label>{!! Form::radio('%1\$s', '0', true) !!} <span>No</span></label>
+$indentation</div>
 EOD;
 
         return $this->wrapField($item, sprintf($field, $item['name']));
