@@ -11,16 +11,7 @@
 
                 <div class="table-responsive">
                     <table class="table table-bordered table-striped table-hover">
-                        <thead>
-                            <tr>
-                                <th>{!! trans('%%crudName%%.tableheading_id', ['name' => '%%modelName%%', 'name_plural' => '%%crudNameCap%%']) !!}</th> %%formHeadingHtml%%
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>{{ $%%crudNameSingular%%->id }}</td> %%formBodyHtml%%
-                            </tr>
-                        </tbody>    
+                        %%tableHtmlForShowView%%
                     </table>
                 </div>
 

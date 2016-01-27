@@ -192,14 +192,11 @@ class CrudViewCommand extends Command
         // Form fields and label
         $formHeadingHtml = '';
         $formBodyHtml = '';
-        $formBodyHtmlForShowView = '';
+        $tableHtmlForShowView = '';
         $languageStrings = '';
 
         $i = 0;
         foreach ($formFields as $key => $value) {
-            if ($i == 3) {
-                break;
-            }
 
             $field = $value['name'];
             $fieldType = $value['type'];
@@ -207,11 +204,16 @@ class CrudViewCommand extends Command
             
             $languageStrings .= "    '" . $field . "' => '" . $label . "',\n";
             
-
+            $tableHtmlForShowView .= '<tr><th>'.$label.'</th><td>{{ $'.$this->crudNameSingular.'->' . $field . ' }}</td></tr>';
+            
             if(in_array($fieldType, $this->typesNotShownInOverview)) {
                 continue;
             }       
                         
+            if ($i == 3) {
+                continue;
+            }
+            
             $formHeadingHtml .= '<th>{{ trans(\'' . $this->crudName. '.' . $field . '\') }}</th>';
 
             if ($i == 0) {
@@ -220,23 +222,22 @@ class CrudViewCommand extends Command
                 $formBodyHtml .= '<td>{{ $item->' . $field . ' }}</td>';
             }
             
-            $formBodyHtmlForShowView .= '<td> {{ $'.$this->crudNameSingular.'->' . $field . ' }} </td>';
-
             $i++;
         }
 
         $replaces = [
-            '%%formHeadingHtml%%'   => $formHeadingHtml,
-            '%%formBodyHtml%%'      => $formBodyHtml,
-            '%%crudName%%'          => $this->crudName,
-            '%%crudNameSingular%%'  => $this->crudNameSingular,
-            '%%crudNameCap%%'       => $this->crudNameCap,
-            '%%modelName%%'         => $this->modelName,
-            '%%routeGroup%%'        => $this->routeGroup,
-            '%%formFieldsHtml%%'    => $formFieldsHtml,
-            '%%languageStrings%%'   => $languageStrings,
-            '%%extendsLayout%%'     => config('crudgenerator.extend_layout', 'layouts.master'),
-            '%%sectionName%%'       => config('crudgenerator.section_name', 'content'),
+            '%%formHeadingHtml%%'       => $formHeadingHtml,
+            '%%formBodyHtml%%'          => $formBodyHtml,
+            '%%tableHtmlForShowView%%'  => $tableHtmlForShowView,
+            '%%crudName%%'              => $this->crudName,
+            '%%crudNameSingular%%'      => $this->crudNameSingular,
+            '%%crudNameCap%%'           => $this->crudNameCap,
+            '%%modelName%%'             => $this->modelName,
+            '%%routeGroup%%'            => $this->routeGroup,
+            '%%formFieldsHtml%%'        => $formFieldsHtml,
+            '%%languageStrings%%'       => $languageStrings,
+            '%%extendsLayout%%'         => config('crudgenerator.extend_layout', 'layouts.master'),
+            '%%sectionName%%'           => config('crudgenerator.section_name', 'content'),
         ];
         
         // For language file
@@ -275,10 +276,6 @@ class CrudViewCommand extends Command
             File::put($newEditFile, str_replace(array_keys($replaces), $replaces, File::get($newEditFile)));
         }
 
-        
-        // For the show.blade.php another formBodyHrml is used
-        $replaces['%%formBodyHtml%%'] = $formBodyHtmlForShowView;
-        
         // For show.blade.php file
         $showFile = $this->stubsPath . 'show.blade.stub';
         $newShowFile = $path . 'show.blade.php';
