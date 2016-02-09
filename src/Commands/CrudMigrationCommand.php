@@ -11,7 +11,7 @@ class CrudMigrationCommand extends GeneratorCommand
      */
     protected $signature = 'crud:migration
                             {name : The name of the migration.}
-                            {--schema= : The name of the schema.}
+                            {schema : The name of the schema.}
                             {--pk=id : The name of the primary key.}';
 
     /**
