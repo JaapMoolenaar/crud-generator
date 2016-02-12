@@ -21,7 +21,7 @@
                         <tbody>
                         @foreach($%%crudName%% as $item)
                             <tr>
-                                %%formBodyHtml%%
+%%formBodyHtml%%
                                 <td>
                                     <a href="{{ url('%%routeGroup%%%%crudName%%/' . $item->id . '/edit') }}" class="btn btn-primary btn-xs">{!! trans('%%crudName%%.button_goedit') !!}</a>
                                     &nbsp;
