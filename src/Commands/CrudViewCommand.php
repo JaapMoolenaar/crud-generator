@@ -283,6 +283,15 @@ class CrudViewCommand extends Command
             File::put($newEditFile, str_replace(array_keys($replaces), $replaces, File::get($newEditFile)));
         }
 
+        // For edit.blade.php file
+        $predeleteFile = $this->stubsPath . 'predelete.blade.stub';
+        $newPredeleteFile = $path . 'predelete.blade.php';
+        if (!File::copy($predeleteFile, $newPredeleteFile)) {
+            $this->error("failed to copy $predeleteFile...\n");
+        } else {
+            File::put($newPredeleteFile, str_replace(array_keys($replaces), $replaces, File::get($newPredeleteFile)));
+        }
+
         // For show.blade.php file
         $showFile = $this->stubsPath . 'show.blade.stub';
         $newShowFile = $path . 'show.blade.php';
