@@ -69,7 +69,7 @@ class CrudMigrationCommand extends GeneratorCommand
         $tableName = $this->argument('name');
         $className = 'Create' . ucwords($tableName) . 'Table';
 
-        $schema = $this->option('schema');
+        $schema = $this->argument('schema');
         $fields = explode(',', $schema);
 
         $data = array();
