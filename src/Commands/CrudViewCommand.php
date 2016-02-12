@@ -196,6 +196,8 @@ class CrudViewCommand extends Command
         $languageStrings = '';
 
         $i = 0;
+        $indexIndentation = str_repeat("    ", 8);
+        $showIndentation = str_repeat("    ", 6);
         foreach ($formFields as $key => $value) {
 
             $field = $value['name'];
@@ -204,7 +206,7 @@ class CrudViewCommand extends Command
             
             $languageStrings .= "    '" . $field . "' => '" . $label . "',\n";
             
-            $tableHtmlForShowView .= '<tr><th>'.$label.'</th><td>{{ $'.$this->crudNameSingular.'->' . $field . ' }}</td></tr>';
+            $tableHtmlForShowView .= $showIndentation.'<tr><th>'.$label.'</th><td>{{ $'.$this->crudNameSingular.'->' . $field . ' }}</td></tr>'."\n";
             
             if(in_array($fieldType, $this->typesNotShownInOverview)) {
                 continue;
@@ -214,16 +216,21 @@ class CrudViewCommand extends Command
                 continue;
             }
             
-            $formHeadingHtml .= '<th>{{ trans(\'' . $this->crudName. '.' . $field . '\') }}</th>';
+            $formHeadingHtml .= $indexIndentation.'<th>{{ trans(\'' . $this->crudName. '.' . $field . '\') }}</th>'."\n";
 
             if ($i == 0) {
-                $formBodyHtml .= '<td><a href="{{ url(\''.$this->routeGroup.$this->crudName.'\', $item->id) }}">{{ $item->' . $field . ' }}</a></td>';
+                $formBodyHtml .= $indexIndentation.'<td><a href="{{ url(\''.$this->routeGroup.$this->crudName.'\', $item->id) }}">{{ $item->' . $field . ' }}</a></td>'."\n";
             } else {
-                $formBodyHtml .= '<td>{{ $item->' . $field . ' }}</td>';
+                $formBodyHtml .= $indexIndentation.'<td>{{ $item->' . $field . ' }}</td>'."\n";
             }
             
             $i++;
         }
+        
+        // Trim the extra line endings
+        $tableHtmlForShowView = rtrim($tableHtmlForShowView);
+        $formHeadingHtml = rtrim($formHeadingHtml);
+        $formBodyHtml = rtrim($formBodyHtml);
 
         $replaces = [
             '%%formHeadingHtml%%'       => $formHeadingHtml,
