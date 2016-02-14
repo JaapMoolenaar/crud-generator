@@ -81,7 +81,7 @@ class CrudCommand extends Command
 
             $requiredFields = ($requiredFieldsStr != '') ? "[" . $requiredFieldsStr . "]" : '';
 
-            $this->call('crud:controller', ['name' => $controllerNamespace . $name . 'Controller', '--crud-name' => $name, '--model-name' => $modelName, '--view-path' => $viewPath, '--required-fields' => $requiredFields, '--route-group' => $routeGroup]);
+            $this->call('crud:controller', ['name' => $name, '--crud-name' => $name, '--model-name' => $modelName, '--view-path' => $viewPath, '--required-fields' => $requiredFields, '--route-group' => $routeGroup]);
             $this->call('crud:model', ['name' => $modelName, '--fillable' => $fillable, '--table' => $tableName]);
             $this->call('crud:migration', ['name' => $migrationName, 'schema' => $fields, '--pk' => $primaryKey]);
             $this->call('crud:view', ['name' => $viewName, '--fields' => $fields, '--view-path' => $viewPath, '--route-group' => $routeGroup]);

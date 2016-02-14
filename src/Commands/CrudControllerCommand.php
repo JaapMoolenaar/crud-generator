@@ -14,7 +14,8 @@ class CrudControllerCommand extends GeneratorCommand
                             {--crud-name= : The name of the Crud.}
                             {--model-name= : The name of the Model.}
                             {--view-path= : The name of the view path.}
-                            {--required-fields= : Required fields for validations.}
+                            {--fields= : fields config for validations.}
+                            {--required-fields= : Required fields php string for validations.}
                             {--route-group= : Prefix of the route group.}';
 
     /**
@@ -55,6 +56,13 @@ class CrudControllerCommand extends GeneratorCommand
         return $rootNamespace . '\Http\Controllers';
     }
 
+    
+    
+    protected function parseName($name) {
+        $name = preg_replace('/Controller$/i', '', $name).'Controller';
+        
+        return parent::parseName($name);
+    }
     /**
      * Build the model class with the given name.
      *
@@ -62,19 +70,44 @@ class CrudControllerCommand extends GeneratorCommand
      *
      * @return string
      */
-    protected function buildClass($name)
+    protected function buildClass($controllerName)
     {
         $stub = $this->files->get($this->getStub());
 
-        $viewPath = $this->option('view-path') ? $this->option('view-path') . '.' : '';
-        $crudName = strtolower($this->option('crud-name'));
-        $crudNameSingular = str_singular($crudName);
-        $modelName = $this->option('model-name');
-        $routeGroup = ($this->option('route-group')) ? $this->option('route-group') . '/' : '';
+        $name = $this->argument('name');
+        $modelName = str_singular($name);
 
+        if ($this->option('fields')) {
+            $fields = $this->option('fields');
+
+            $fieldsArray = explode(',', $fields);
+            $requiredFields = '';
+            $requiredFieldsStr = '';
+
+            foreach ($fieldsArray as $item) {
+                $itemArray = explode(':', $item);
+                $currentField = trim($itemArray[0]);
+                $requiredFieldsStr .= (isset($itemArray[2])
+                    && (trim($itemArray[2]) == 'req'
+                        || trim($itemArray[2]) == 'required'))
+                ? "'$currentField' => 'required', " : '';
+            }
+
+            $requiredFields = ($requiredFieldsStr != '') ? "[" . $requiredFieldsStr . "]" : '';
+        }
+        
+        
+        
+        $viewPath = $this->option('view-path') ? $this->option('view-path') . '.' : '';
+        $crudName = strtolower($this->option('crud-name') ?: $name);
+        $crudNameSingular = str_singular($crudName);
+        $modelName = $this->option('model-name') ?: $modelName;
+        $routeGroup = $this->option('route-group') ? $this->option('route-group') . '/' : '';
+        $requiredFields = $this->option('required-fields') ?: $requiredFields;
+                
         $validationRules = '';
-        if ($this->option('required-fields') != '') {
-            $validationRules = "\$this->validate(\$request, " . $this->option('required-fields') . ");\n";
+        if ($requiredFields) {
+            $validationRules = "\$this->validate(\$request, " . $requiredFields . ");\n";
         }
         
         $data = compact([
@@ -88,7 +121,7 @@ class CrudControllerCommand extends GeneratorCommand
         
         $stub = $this->makeFromBladeString($stub, $data);
 
-        return $this->replaceNamespace($stub, $name)
-                    ->replaceClass($stub, $name);
+        return $this->replaceNamespace($stub, $controllerName)
+                    ->replaceClass($stub, $controllerName);
     }
 }
