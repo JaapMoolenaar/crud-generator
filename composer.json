@@ -22,7 +22,7 @@
     "require": {
         "php": ">=5.5.9",
         "illuminate/support": "5.1.*|5.2.*",
-        "laravelcollective/html": "^5.2",
+        "jaapmoolenaar.nl/html": "^5.2",
         "laracasts/flash": "^1.3"
     },
     "autoload": {
